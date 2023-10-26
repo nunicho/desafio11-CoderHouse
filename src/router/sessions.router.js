@@ -5,6 +5,9 @@ const modeloUsuarios = require("../dao/DB/models/usuariosGithub.modelo.js");
 const modeloUsers = require("../dao/DB/models/usuariosGithub.modelo.js");
 const crypto = require("crypto");
 
+
+const util = require("../util.js");
+
 //PARA TRAER PASSPORT
 const passport = require("passport");
 
@@ -59,6 +62,13 @@ router.get("/errorLogin", (req, res) => {
   });
 });
 
+router.post("/login", util.passportCall("loginLocal"), (req, res) => {
+  // Esta parte del código se ejecutará solo si la autenticación es exitosa
+  req.session.usuario = req.user;
+  res.redirect("/");
+});
+
+/*
 router.post("/login", (req, res, next) => {
   if (!req.body.email || !req.body.password) {
     return res.redirect("/login?error=Faltan datos");
@@ -83,6 +93,7 @@ router.post("/login", (req, res, next) => {
     res.redirect("/");
   })(req, res, next);
 });
+*/
 
 router.get("/logout", (req, res) => {
   req.session.destroy((e) => console.log(e));
