@@ -26,7 +26,7 @@ const inicializaPassport = () => {
           let { first_name, last_name, email, age, password } = req.body;
 
           if (!first_name || !last_name || !age || !email || !password) {
-            return done(null, false, "Por favor, complete todos los campos.");
+            return done(null, false,{message:"Por favor, complete todos los campos"});
           }
 
           // Añadir validación para age
@@ -35,7 +35,7 @@ const inicializaPassport = () => {
             return done(
               null,
               false,
-              "La edad debe ser mayor a 13 y menor a 120"
+              {message: "La edad debe ser mayor a 13 y menor a 120"}              
             );
           }
 
@@ -44,7 +44,7 @@ const inicializaPassport = () => {
             return done(
               null,
               false,
-              "El correo electrónico ya está registrado"
+              {message:"El correo electrónico ya está registrado"}              
             );
           }
 
@@ -62,7 +62,7 @@ const inicializaPassport = () => {
 
           return done(null, usuario);
         } catch (error) {
-          return done(error, false, "Ocurrió un error durante el registro.");
+          return done(error, false, {message:"Ocurrió un error durante el registro."});
         }
       }
     )

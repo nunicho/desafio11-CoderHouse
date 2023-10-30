@@ -19,104 +19,29 @@ router.get("/errorRegistro", (req, res) => {
   });
 });
 
-router.post("/registro", async (req, res, next) => {
-  let nombre = req.body.first_name;
-  let apellido = req.body.last_name;
-  let age = req.body.age;
-  let email = req.body.email;
-  let password = req.body.password;
-  let existe = await modeloUsers.findOne({ email });
 
 
-  if (!nombre || !apellido || !age || !email || !password) {
-    return res.redirect("/registro?error=Faltan datos");
-  }
-
-  age = parseInt(age); // Convertir age a número
-      if (isNaN(age) || age <= 13 || age >= 120) {
-        return res.redirect("/registro?error=La edad debe estar comprendida entre 13 y 120");
-      }
-
-  passport.authenticate("registro", async (error) => {
-    if (error) {
-      return res.redirect(
-        "/registro?error=Ocurrió un error al registrar el usuario"
-      );
-    }   
-    if (existe) {
-      return res.redirect(
-        "/registro?error=El correo electrónico ya está en uso"
-      );
-    }
-
-    // Si no hay errores, se redirige a la página de inicio de sesión.
-    res.redirect(`/login?usuarioCreado=${email}`);
-  })(req, res, next);
-});
-
-
-router.get("/errorLogin", (req, res) => {
-  res.setHeader("Content-Type", "application/json");
-  res.status(200).json({
-    error: "Error Login",
-  });
-});
-
-
-router.post("/login", util.passportCall("loginLocal"), (req, res) => {
-  // Esta parte del código se ejecutará solo si la autenticación es exitosa
+router.post("/registro", util.passportCallRegister("register"), (req, res) => {
   if (req.user) {
     req.session.usuario = req.user;
     return res.redirect("/");
   } else {
-    // Si llegamos aquí, significa que la autenticación falló
-    const error = req.body.error; // Accede al objeto de error
+      const error = req.body.error; 
+        return res.redirect("login", { error });
+  }
+});
 
-    // Renderiza la página de inicio de sesión con el objeto de error
+
+router.post("/login", util.passportCall("loginLocal"), (req, res) => {
+  if (req.user) {
+    req.session.usuario = req.user;
+    return res.redirect("/");
+  } else {    
+    const error = req.body.error;    
     return res.redirect("login", { error });
   }
 });
 
-
-/*
-router.post("/login", util.passportCall("loginLocal"), (req, res) => {
-  // Esta parte del código se ejecutará solo si la autenticación es exitosa
-  if (req.user) {
-    req.session.usuario = req.user;
-    res.redirect("/");
-  } else {
-    // Aquí manejas el objeto de error correctamente
-    const error = req.body.error; // Accede al objeto de error
-    res.render("login", { error: error.message, detalle: error.detalle });
-  }
-});
-*/
-/*
-router.post("/login", (req, res, next) => {
-  if (!req.body.email || !req.body.password) {
-    return res.redirect("/login?error=Faltan datos");
-  }
-
-  passport.authenticate("loginLocal", (error, usuario, info) => {
-    if (error) {
-      return res.status(500).send("Error en la autenticación");
-    }
-
-    if (!usuario) {
-      if (info === "Credenciales incorrectas") {
-        console.log(info);
-        return res.redirect("/login?error=Credenciales incorrectas");
-      } else if (info === "Clave inválida") {
-        console.log(info);
-        return res.redirect("/login?error=Clave inválida");
-      }
-    }
-
-    req.session.usuario = usuario;
-    res.redirect("/");
-  })(req, res, next);
-});
-*/
 
 router.get("/logout", (req, res) => {
   req.session.destroy((e) => console.log(e));
@@ -133,7 +58,6 @@ router.get(
   }),
   (req, res) => {}
 );
-
 
 
 router.get(

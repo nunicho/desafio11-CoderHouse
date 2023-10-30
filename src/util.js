@@ -38,9 +38,36 @@ const passportCall = (estrategia) => {
   };
 };
 
+
+const passportCallRegister = () => {
+  return function (req, res, next) {
+    passport.authenticate("registro", function (err, usuario, info) {
+      if (err) return next(err);
+
+      if (!req.body.email || !req.body.password) {
+        return res.redirect("/login?error=Faltan datos");
+      }
+
+      if (!usuario) {
+        const error = info || {}; // Accede al objeto de error
+        const errorMessage = encodeURIComponent(
+          error.message || "Error desconocido"
+        );
+        const errorDetalle = encodeURIComponent(
+          error.detalle || "Error desconocido"
+        );
+        return res.redirect(`/login?error=${errorMessage} - ${errorDetalle}`);
+      }
+      req.user = usuario;
+      return next();
+    })(req, res, next);
+  };
+};
+
 module.exports = {
   __dirname,
   generaHash,
   validaHash,
   passportCall,
+  passportCallRegister
 };
