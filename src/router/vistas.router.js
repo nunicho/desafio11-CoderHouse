@@ -163,24 +163,6 @@ router.put("/DBproducts/:id", auth, productosController.editarProducto);
 router.delete("/DBproducts/:id", auth, productosController.borrarProducto);
 
 /*
-router.get("/DBproducts/:id", auth, async (req, res) => {
-  let id = req.params.id;
-
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(400).json({ error: "id inválido" });
-
-  let productoDB = await productosModelo.findById(id).lean();
-
-  if (!productoDB)
-    return res.status(404).json({ error: `Producto con id ${id} inexistente` });
-
-  res.header("Content-type", "text/html");
-  res.status(200).render("DBproductsDetails", {
-    productoDB,
-    estilo: "productDetails.css",
-  });
-});
-
 router.post("/DBProducts", auth, async (req, res) => {
   let producto = req.body;
   if (

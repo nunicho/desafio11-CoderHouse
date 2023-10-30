@@ -76,21 +76,30 @@ const obtenerProducto = async (req, res, next) => {
 
 const crearProducto = async (req, res) => {
   try {
-    const errores = validationResult(req);
-    if (!errores.isEmpty()) {
+    const producto = req.body;
+
+    if (
+      !producto.title ||
+      !producto.description ||
+      !producto.price ||
+      !producto.thumbnail ||
+      !producto.code ||
+      !producto.stock
+    ) {
+      return res.status(400).json({ error: "Faltan datos" });
+    }
+
+    const existe = await productosModelo.findOne({ code: producto.code });
+    if (existe) {
       return res.status(400).json({
-        errores: errores.array(),
+        error: `El código ${producto.code} ya está siendo usado por otro producto.`,
       });
     }
-    const productoNuevo = new productosModelo(req.body);
-    await productoNuevo.save();
-    res.status(201).json({
-      mensaje: "El producto fue correctamente creado",
-    });
+
+    const productoInsertado = await productosModelo.create(producto);
+    res.status(201).json({ productoInsertado });
   } catch (error) {
-    res.status(400).json({
-      mensaje: "Error al intentar agregar un producto",
-    });
+    res.status(500).json({ error: "Error inesperado", detalle: error.message });
   }
 };
 
