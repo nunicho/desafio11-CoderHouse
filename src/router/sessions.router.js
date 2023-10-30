@@ -62,12 +62,35 @@ router.get("/errorLogin", (req, res) => {
   });
 });
 
+
 router.post("/login", util.passportCall("loginLocal"), (req, res) => {
   // Esta parte del código se ejecutará solo si la autenticación es exitosa
-  req.session.usuario = req.user;
-  res.redirect("/");
+  if (req.user) {
+    req.session.usuario = req.user;
+    return res.redirect("/");
+  } else {
+    // Si llegamos aquí, significa que la autenticación falló
+    const error = req.body.error; // Accede al objeto de error
+
+    // Renderiza la página de inicio de sesión con el objeto de error
+    return res.redirect("login", { error });
+  }
 });
 
+
+/*
+router.post("/login", util.passportCall("loginLocal"), (req, res) => {
+  // Esta parte del código se ejecutará solo si la autenticación es exitosa
+  if (req.user) {
+    req.session.usuario = req.user;
+    res.redirect("/");
+  } else {
+    // Aquí manejas el objeto de error correctamente
+    const error = req.body.error; // Accede al objeto de error
+    res.render("login", { error: error.message, detalle: error.detalle });
+  }
+});
+*/
 /*
 router.post("/login", (req, res, next) => {
   if (!req.body.email || !req.body.password) {

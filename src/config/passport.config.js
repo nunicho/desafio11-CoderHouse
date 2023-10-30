@@ -14,53 +14,107 @@ const crypto = require("crypto");
 const util = require("../util.js");
 
 const inicializaPassport = () => {
-passport.use(
-  "registro",
-  new local.Strategy(
-    {
-      usernameField: "email",
-      passReqToCallback: true,
-    },
-    async (req, username, password, done) => {
-      try {
-        let { first_name, last_name, email, age, password } = req.body;
+  passport.use(
+    "registro",
+    new local.Strategy(
+      {
+        usernameField: "email",
+        passReqToCallback: true,
+      },
+      async (req, username, password, done) => {
+        try {
+          let { first_name, last_name, email, age, password } = req.body;
 
-        if (!first_name || !last_name || !age || !email || !password) {
-          return done(null, false, "Por favor, complete todos los campos.");
+          if (!first_name || !last_name || !age || !email || !password) {
+            return done(null, false, "Por favor, complete todos los campos.");
+          }
+
+          // Añadir validación para age
+          age = parseInt(age); // Convertir age a número
+          if (isNaN(age) || age <= 13 || age >= 120) {
+            return done(
+              null,
+              false,
+              "La edad debe ser mayor a 13 y menor a 120"
+            );
+          }
+
+          let existe = await modeloUsers.findOne({ email });
+          if (existe) {
+            return done(
+              null,
+              false,
+              "El correo electrónico ya está registrado"
+            );
+          }
+
+          const cartId = generateCustomCartId();
+
+          let usuario = await modeloUsers.create({
+            first_name,
+            last_name,
+            email,
+            age,
+            password: util.generaHash(password),
+            cart: cartId,
+            role: "user",
+          });
+
+          return done(null, usuario);
+        } catch (error) {
+          return done(error, false, "Ocurrió un error durante el registro.");
         }
-
-        // Añadir validación para age
-        age = parseInt(age); // Convertir age a número
-        if (isNaN(age) || age <= 13 || age >= 120) {
-          return done(null, false, "La edad debe ser mayor a 13 y menor a 120");
-        }
-
-        let existe = await modeloUsers.findOne({ email });
-        if (existe) {
-          return done(null, false, "El correo electrónico ya está registrado");
-        }
-
-         const cartId = generateCustomCartId();
-
-        let usuario = await modeloUsers.create({
-          first_name,
-          last_name,
-          email,
-          age,
-          password: util.generaHash(password),
-          cart: cartId,
-          role: "user",
-        });
-
-        return done(null, usuario);
-      } catch (error) {
-        return done(error, false, "Ocurrió un error durante el registro.");
       }
-    }
-  )
-);
+    )
+  );
 
-    passport.use(
+  passport.use(
+    "loginLocal",
+    new local.Strategy(
+      {
+        usernameField: "email",
+      },
+      async (username, password, done) => {
+        try {
+         
+          if (!username|| !password) {
+            return done(null, false, {
+              message: "Faltan datos",
+              detalle: "Contacte a RRHH",
+            });
+          }
+
+          let usuario = await modeloUsers.findOne({ email: username });
+          if (!usuario) {
+            return done(null, false, {
+              message: "Credenciales incorrectas",
+              detalle: "Vuelva a ingresar los datos",
+            });
+          } else {
+            if (!util.validaHash(usuario, password)) {
+              return done(null, false, {
+                message: "Clave inválida",
+                detalle: "Vuelva a ingresar los datos",
+              });
+            }
+          }
+
+          usuario = {
+            nombre: usuario.first_name,
+            email: usuario.email,
+            _id: usuario._id,
+            role: usuario.role,
+          };
+
+          return done(null, usuario);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+  /*
+passport.use(
       "loginLocal",
       new local.Strategy(
         {
@@ -95,7 +149,7 @@ passport.use(
         }
       )
     );
-
+*/
   passport.use(
     "loginGithub",
     new github.Strategy(
@@ -135,8 +189,6 @@ passport.use(
     let usuario = await modeloUsuariosGithub.findById(id);
     return done(null, usuario);
   });
-
-
 }; // fin de inicializaPassport
 
 // FUNCION PARA ASIGNAR UN ID ÚNICO A CART
