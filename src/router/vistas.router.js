@@ -4,6 +4,10 @@ const arrayProducts = require("../archivos/productos.json");
 const productosModelo = require("../dao/DB/models/productos.modelo.js");
 const carritosModelo = require("../dao/DB/models/carritos.modelo.js");
 const prodModelo = require("../dao/DB/models/productos.modelo.js");
+
+const productosController = require("../controllers/productos.controller.js")
+
+
 const mongoose = require("mongoose");
 
 const auth = (req, res, next) => {
@@ -90,15 +94,25 @@ router.get("/fsrealtimeproducts", auth, (req, res) => {
   });
 });
 
-//---------------------------------------------------------------- RUTAS PARA MONGO --------------- //
+//---------------------------------------------------------------- RUTAS PARA PRODUCTOS--------------- //
 
+
+router.get("/DBproducts", auth, productosController.listarProductos, );
+router.post("/DBProducts", auth, productosController.crearProducto);
+router.get("/DBproducts/:id", auth, productosController.obtenerProducto);
+router.put("/DBproducts/:id", auth, productosController.editarProducto);
+router.delete("/DBproducts/:id", auth, productosController.borrarProducto);
+
+
+
+/*
 router.get("/DBproducts", auth, async (req, res) => {
   try {
     let pagina = req.query.pagina || 1;
     let filtroTitle = req.query.filtro;
     let filtroCode = req.query.codeFilter;
-    let sortOption = req.query.sort; // Obtén el valor del campo "sort" de la consulta
-    let limit = parseInt(req.query.limit) || 10; // Obtén el valor del parámetro "limit" de la consulta, o establece un valor predeterminado de 10
+    let sortOption = req.query.sort; 
+    let limit = parseInt(req.query.limit) || 10; 
 
     let query = {};
 
@@ -175,13 +189,6 @@ router.get("/DBproducts/:id", auth, async (req, res) => {
   res.status(200).render("DBproductsDetails", {
     productoDB,
     estilo: "productDetails.css",
-    // title: productoDB.title,
-    // description: productoDB.description,
-    // price: productoDB.price,
-    // thumbnail: productoDB.thumbnail ,
-    // code: productoDB.code,
-    // stock: productoDB.stock,
-    // estilo: "realTimeProducts.css"
   });
 });
 
@@ -225,6 +232,8 @@ router.delete("/DBproducts/:id", auth, async (req, res) => {
   res.status(200).json({ resultado });
 });
 
+
+*/
 router.get("/carts/:cid", auth, async (req, res) => {
   try {
     const cid = req.params.cid;
@@ -272,7 +281,7 @@ router.get("/chat", auth, (req, res) => {
   });
 });
 
-//---------------------------------------------------------------- RUTAS PARA EL LOGIN ---------------//
+//---------------------------------------------------------------- RUTAS PARA EL USERS ---------------//
 
 router.get("/registro", auth2, (req, res) => {
   let error = false;
