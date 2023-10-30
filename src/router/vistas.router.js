@@ -5,8 +5,7 @@ const productosModelo = require("../dao/DB/models/productos.modelo.js");
 const carritosModelo = require("../dao/DB/models/carritos.modelo.js");
 const prodModelo = require("../dao/DB/models/productos.modelo.js");
 
-const productosController = require("../controllers/productos.controller.js")
-
+const productosController = require("../controllers/productos.controller.js");
 
 const mongoose = require("mongoose");
 
@@ -96,84 +95,74 @@ router.get("/fsrealtimeproducts", auth, (req, res) => {
 
 //---------------------------------------------------------------- RUTAS PARA PRODUCTOS--------------- //
 
-
-router.get("/DBproducts", auth, productosController.listarProductos, );
-router.post("/DBProducts", auth, productosController.crearProducto);
-router.get("/DBproducts/:id", auth, productosController.obtenerProducto);
-router.put("/DBproducts/:id", auth, productosController.editarProducto);
-router.delete("/DBproducts/:id", auth, productosController.borrarProducto);
-
-
-
-/*
 router.get("/DBproducts", auth, async (req, res) => {
   try {
-    let pagina = req.query.pagina || 1;
-    let filtroTitle = req.query.filtro;
-    let filtroCode = req.query.codeFilter;
-    let sortOption = req.query.sort; 
-    let limit = parseInt(req.query.limit) || 10; 
-
-    let query = {};
-
-    if (filtroTitle && filtroCode) {
-      query = {
-        $or: [
-          { title: { $regex: filtroTitle, $options: "i" } },
-          { code: { $regex: filtroCode, $options: "i" } },
-        ],
-      };
-    } else if (filtroTitle) {
-      query = { title: { $regex: filtroTitle, $options: "i" } };
-    } else if (filtroCode) {
-      query = { code: { $regex: filtroCode, $options: "i" } };
-    }
-
-    let sortQuery = {}; // Inicializa el objeto de consulta de ordenamiento vacío
-
-    if (sortOption === "price_asc") {
-      // Si el usuario selecciona orden ascendente por precio
-      sortQuery = { price: 1 };
-    } else if (sortOption === "price_desc") {
-      // Si el usuario selecciona orden descendente por precio
-      sortQuery = { price: -1 };
-    }
-
-    let productos = await productosModelo.paginate(query, {
-      limit: limit, // Aplica el límite según el valor de "limit"
-      lean: true,
-      page: pagina,
-      sort: sortQuery, // Aplica el ordenamiento según el valor de sortQuery
-    });
-
-    let { totalPages, hasPrevPage, hasNextPage, prevPage, nextPage } =
-      productos;
+    const productos = await productosController.listarProductos(req, res);
 
     res.header("Content-type", "text/html");
     res.status(200).render("DBproducts", {
       productos: productos.docs,
       hasProducts: productos.docs.length > 0,
-      //activeProduct: true,
+      // activeProduct: true,
       status: productos.docs.status,
       pageTitle: "Productos en DATABASE",
       estilo: "productsStyles.css",
-      totalPages,
-      hasPrevPage,
-      hasNextPage,
-      prevPage,
-      nextPage,
-      filtro: filtroTitle || "",
-      codeFilter: filtroCode || "",
-      sort: sortOption || "", // Establece el valor del campo de ordenamiento en la vista
-      limit: limit, // Pasa el límite a la vista
+      totalPages: productos.totalPages,
+      hasPrevPage: productos.hasPrevPage,
+      hasNextPage: productos.hasNextPage,
+      prevPage: productos.prevPage,
+      nextPage: productos.nextPage,
+      filtro: req.query.filtro || "",
+      codeFilter: req.query.codeFilter || "",
+      sort: req.query.sort || "",
+      limit: req.query.limit || 10,
     });
   } catch (error) {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
 
-module.exports = router;
 
+router.get(
+  "/DBproducts/:id",
+  auth,
+  productosController.obtenerProducto,
+  (req, res) => {
+    const productoDB = res.locals.productoDB;
+    if (!productoDB) {
+      return res.status(404).send("Producto no encontrado");
+    }
+    res.header("Content-type", "text/html");
+    res.status(200).render("DBproductsDetails", {
+      productoDB,
+      estilo: "productDetails.css",
+    });
+  }
+);
+
+router.get(
+  "/DBproducts/:id",
+  auth,
+  productosController.obtenerProducto,
+  (req, res) => {
+    const productoDB = res.locals.productoDB;
+    if (!productoDB) {
+      return res.status(404).send("Producto no encontrado");
+    }
+    res.header("Content-type", "text/html");
+    res.status(200).render("DBproductsDetails", {
+      productoDB,
+      estilo: "productDetails.css",
+    });
+  }
+);
+
+
+router.post("/DBProducts", auth, productosController.crearProducto);
+router.put("/DBproducts/:id", auth, productosController.editarProducto);
+router.delete("/DBproducts/:id", auth, productosController.borrarProducto);
+
+/*
 router.get("/DBproducts/:id", auth, async (req, res) => {
   let id = req.params.id;
 
@@ -349,8 +338,7 @@ router.get("/loginAdmin", (req, res) => {
 //  RUTA CURRENT
 
 router.get("/current", (req, res) => {
- 
-  const user = req.session.usuario; 
+  const user = req.session.usuario;
 
   if (!user) {
     return res.status(401).render("current", {
@@ -360,10 +348,8 @@ router.get("/current", (req, res) => {
 
   res.status(200).render("current", {
     estilo: "login.css",
-    usuario: user, 
+    usuario: user,
   });
 });
-
-
 
 module.exports = router;
