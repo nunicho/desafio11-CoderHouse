@@ -1,7 +1,8 @@
 const carritosModelo = require("../dao/DB/models/carritos.modelo.js");
+const prodModelo = require("../dao/DB/models/productos.modelo.js")
 const mongoose = require("mongoose");
 
-const obtenerCarrito = async (req, res) => {
+const obtenerCarrito = async (req, res, next) => {
   try {
     const cid = req.params.cid;
 
@@ -12,7 +13,7 @@ const obtenerCarrito = async (req, res) => {
       });
     }
 
-    const carritoDB = await carritosModelo
+    const carrito = await carritosModelo
       .findOne({ _id: cid })
       .populate({
         path: "productos.producto",
@@ -20,15 +21,14 @@ const obtenerCarrito = async (req, res) => {
       })
       .lean();
 
-    if (!carritoDB) {
+    if (!carrito) {
       return res.status(404).json({
         status: "error",
         mensaje: `El carrito con ID ${cid} no existe`,
       });
-    }
-
-    // Devuelve solo los datos del carrito sin preocuparte por el renderizado.
-    return res.status(200).json({ carritoDB });
+    }    
+    res.locals.carritoDB = carrito;
+    next();
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -38,3 +38,5 @@ const obtenerCarrito = async (req, res) => {
 module.exports = {
   obtenerCarrito,
 };
+
+
