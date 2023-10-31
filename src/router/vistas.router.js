@@ -6,6 +6,7 @@ const carritosModelo = require("../dao/DB/models/carritos.modelo.js");
 const prodModelo = require("../dao/DB/models/productos.modelo.js");
 
 const productosController = require("../controllers/productos.controller.js");
+const carritosController = require("../controllers/carritos.controller");
 
 const mongoose = require("mongoose");
 
@@ -163,9 +164,44 @@ router.post("/DBProducts", auth, productosController.crearProducto);
 // PARA AGREGAR EN OTRO MOMENTO
 //router.put("/DBproducts/:id", auth, productosController.editarProducto);
 
-router.delete("/DBproducts/:id", auth, productosController.borrarProducto);
+router.delete("/DBproducts/:id", auth, productosController.borrarProducto, (req, res)=>{
+   res.header("Content-type", "text/html");
+    res.status(200).render("DBproductsDetails", {
+      productoDB,
+      estilo: "productDetails.css",
+    });
+
+});
 
 
+//---------------------------------------------------------------- RUTAS PARA CARRITOS--------------- //
+
+router.get(
+  "/carts/:cid",
+  auth,
+  carritosController.obtenerCarrito,
+  (req, res) => {
+    const carritoDB = res.locals.carritoDB;
+
+    if (!carritoDB) {
+      return res.status(404).json({
+        status: "error",
+        mensaje: "No se pudo obtener el carrito",
+      });
+    }
+
+    // Realiza el renderizado aquí.
+    res.header("Content-type", "text/html");
+    res.status(200).render("DBcartDetails", {
+      estilo: "DBcartDetails.css",
+      carritoDB: carritoDB,
+    });
+  }
+);
+
+
+
+/*
 router.get("/carts/:cid", auth, async (req, res) => {
   try {
     const cid = req.params.cid;
@@ -202,6 +238,8 @@ router.get("/carts/:cid", auth, async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+*/
+
 
 //---------------------------------------------------------------- RUTAS PARA EL CHAT --------------- //
 
