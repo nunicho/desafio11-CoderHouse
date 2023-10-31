@@ -104,7 +104,7 @@ const crearProducto = async (req, res) => {
 };
 
 
-
+/*
 const editarProducto = async (req, res) => {
   try {
     await productosModelo.findByIdAndUpdate(req.params.id, req.body);
@@ -124,12 +124,31 @@ const editarProducto = async (req, res) => {
   }
 };
 
+*/
+
+
+
 const borrarProducto = async (req, res) => {
   try {
-    await productosModelo.findByIdAndDelete(req.params.id);
-    res.status(200).json({
-      mensaje: "El producto fue correctamente eliminado",
-    });
+    const id = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
+
+    const producto = await productosModelo.findById(id);
+
+    if (!producto) {
+      return res
+        .status(404)
+        .json({ error: `Producto con id ${id} inexistente` });
+    }
+
+    const resultado = await productosModelo.deleteOne({ _id: id });
+
+    res
+      .status(200)
+      .json({ mensaje: "El producto fue correctamente eliminado", resultado });
   } catch (error) {
     res.status(404).json({
       mensaje: "Error, el producto solicitado no pudo ser eliminado",
@@ -138,11 +157,10 @@ const borrarProducto = async (req, res) => {
 };
 
 
-
 module.exports = {
   listarProductos,
   crearProducto,
   obtenerProducto,
-  editarProducto,
+  //editarProducto,
   borrarProducto, 
 };

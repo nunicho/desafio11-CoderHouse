@@ -159,52 +159,13 @@ router.get(
 
 
 router.post("/DBProducts", auth, productosController.crearProducto);
-router.put("/DBproducts/:id", auth, productosController.editarProducto);
+
+// PARA AGREGAR EN OTRO MOMENTO
+//router.put("/DBproducts/:id", auth, productosController.editarProducto);
+
 router.delete("/DBproducts/:id", auth, productosController.borrarProducto);
 
-/*
-router.post("/DBProducts", auth, async (req, res) => {
-  let producto = req.body;
-  if (
-    !producto.title ||
-    !producto.description ||
-    !producto.price ||
-    !producto.thumbnail ||
-    !producto.code ||
-    !producto.stock
-  )
-    return res.status(400).json({ error: "Faltan datos" });
 
-  let existe = await productosModelo.findOne({ code: producto.code });
-  if (existe)
-    return res.status(400).json({
-      error: `El código ${producto.code} ya está siendo usado por otro producto.`,
-    });
-
-  try {
-    let productoInsertado = await productosModelo.create(producto);
-    res.status(201).json({ productoInsertado });
-  } catch (error) {
-    res.status(500).json({ error: "Error inesperado", detalle: error.message });
-  }
-});
-
-router.delete("/DBproducts/:id", auth, async (req, res) => {
-  let id = req.params.id;
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(400).json({ error: "id inválido" });
-
-  let existe = await productosModelo.findById(id);
-
-  if (!existe)
-    return res.status(404).json({ error: `Producto con id ${id} inexistente` });
-  let resultado = await productosModelo.deleteOne({ _id: id });
-
-  res.status(200).json({ resultado });
-});
-
-
-*/
 router.get("/carts/:cid", auth, async (req, res) => {
   try {
     const cid = req.params.cid;
