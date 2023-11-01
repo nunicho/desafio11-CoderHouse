@@ -24,7 +24,7 @@ router.get("/errorRegistro", (req, res) => {
 router.post("/registro", util.passportCallRegister("register"), (req, res) => {
   if (req.user) {
     req.session.usuario = req.user;
-    return res.redirect("/login");
+
   } else {
       const error = req.body.error; 
         return res.redirect("login", { error });

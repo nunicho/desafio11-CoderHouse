@@ -45,7 +45,7 @@ const passportCallRegister = () => {
       if (err) return next(err);
 
       if (!req.body.email || !req.body.password) {
-        return res.redirect("/login?error=Faltan datos");
+        return res.redirect("/registro?error=Faltan datos");
       }
 
       if (!usuario) {
@@ -56,11 +56,12 @@ const passportCallRegister = () => {
         const errorDetalle = encodeURIComponent(
           error.detalle || "Error desconocido"
         );
-        return res.redirect(`/login?error=${errorMessage} - ${errorDetalle}`);
+        return res.redirect(`/registro?error=${errorMessage} - ${errorDetalle}`);
       }
       req.user = usuario;
-      return next();
-    })(req, res, next);
+        return res.redirect(`/login?usuarioCreado=${usuario.email}`);
+      //return next();
+    })(req, res);
   };
 };
 
