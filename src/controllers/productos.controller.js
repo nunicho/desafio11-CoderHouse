@@ -1,9 +1,5 @@
-const productosModelo = require("../dao/DB/models/productos.modelo.js");
 const mongoose = require("mongoose");
-
-
-
-
+const productosServices = require("../services/productos.service.js");
 
 const listarProductos = async (req, res) => {
   try {
@@ -36,17 +32,17 @@ const listarProductos = async (req, res) => {
       sortQuery.price = -1;
     }
 
-    const productos = await productosModelo.paginate(query, {
-      limit: limit,
-      lean: true,
-      page: pagina,
-      sort: sortQuery,
-    });
+    const productos = await productosServices.listarProductos(
+      query,
+      limit,
+      pagina,
+      sortQuery
+    );
 
     let { totalPages, hasPrevPage, hasNextPage, prevPage, nextPage } =
       productos;
 
-    return productos; // Devolvemos los productos
+    return productos; 
   } catch (error) {
     res.status(500).json({ error: "Error interno del servidor" });
   }
@@ -57,7 +53,7 @@ const obtenerProducto = async (req, res, next) => {
     let id = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(id))
       return res.status(400).json({ error: "id inválido" });
-    let productoDB = await productosModelo.findById(id).lean();
+    let productoDB = await productosServices.obtenerProducto(id);
     if (!productoDB)
       return res
         .status(404)
@@ -71,8 +67,6 @@ const obtenerProducto = async (req, res, next) => {
     });
   }
 };
-
-
 
 const crearProducto = async (req, res) => {
   try {
@@ -89,44 +83,19 @@ const crearProducto = async (req, res) => {
       return res.status(400).json({ error: "Faltan datos" });
     }
 
-    const existe = await productosModelo.findOne({ code: producto.code });
+    const existe = await productosServices.existeProducto(producto.code);
     if (existe) {
       return res.status(400).json({
         error: `El código ${producto.code} ya está siendo usado por otro producto.`,
       });
     }
 
-    const productoInsertado = await productosModelo.create(producto);
+    const productoInsertado = await productosServices.crearProducto(producto);
     res.status(201).json({ productoInsertado });
   } catch (error) {
     res.status(500).json({ error: "Error inesperado", detalle: error.message });
   }
 };
-
-
-/*
-const editarProducto = async (req, res) => {
-  try {
-    await productosModelo.findByIdAndUpdate(req.params.id, req.body);
-    const errores = validationResult(req);
-    if (!errores.isEmpty()) {
-      return res.status(400).json({
-        errores: errores.array(),
-      });
-    }
-    res.status(200).json({
-      mensaje: "El producto fue editado correctamente",
-    });
-  } catch (error) {
-    res.status(404).json({
-      mensaje: "Error, el producto solicitado no pudo ser modificado",
-    });
-  }
-};
-
-*/
-
-
 
 const borrarProducto = async (req, res) => {
   try {
@@ -136,7 +105,7 @@ const borrarProducto = async (req, res) => {
       return res.status(400).json({ error: "ID inválido" });
     }
 
-    const producto = await productosModelo.findById(id);
+    const producto = await productosServices.obtenerProducto(id);
 
     if (!producto) {
       return res
@@ -144,7 +113,7 @@ const borrarProducto = async (req, res) => {
         .json({ error: `Producto con id ${id} inexistente` });
     }
 
-    const resultado = await productosModelo.deleteOne({ _id: id });
+    const resultado = await productosServices.borrarProducto(id);
 
     res
       .status(200)
@@ -156,11 +125,9 @@ const borrarProducto = async (req, res) => {
   }
 };
 
-
 module.exports = {
   listarProductos,
   crearProducto,
   obtenerProducto,
-  //editarProducto,
-  borrarProducto, 
+  borrarProducto,
 };
