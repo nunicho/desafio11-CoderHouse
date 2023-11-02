@@ -144,7 +144,7 @@ clientSecret: "f942dbbff3e0ead468ab3731ba8b0283a6d70057",
 callbackURL: "http://localhost:8080/api/sessions/callbackGithub",
 
 ## 11. Sessions o JWT
-Para este repo se eligió Sessions
+Para este repo se eligió Sessions .
 
 ## 12. Ruta Current
 
