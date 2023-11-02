@@ -55,38 +55,6 @@ router.post(
   }
 );
 
-/*
-
-router.post(
-  "/registro",
- 
-  util.passportCallRegister("register"),
-  (req, res) => {
-    if (req.user) {
-      req.session.usuario = req.user;
-    } else {
-      const error = req.body.error;
-      return res.redirect("login", { error });
-    }
-  }
-);
-
-
-router.post(
-  "/login",
-
-  util.passportCall("loginLocal"),
-  (req, res) => {
-    if (req.user) {
-      req.session.usuario = req.user;
-      return res.redirect("/");
-    } else {
-      const error = req.body.error;
-      return res.redirect("login", { error });
-    }
-  }
-);
-*/
 router.get("/logout", (req, res) => {
   req.session.destroy((e) => console.log(e));
   res.redirect("/login?mensaje=Logout correcto!");
@@ -149,16 +117,3 @@ router.post("/loginAdmin", async (req, res) => {
 
 module.exports = router;
 
-
-/*
-router.get("/current", (req, res) => {
-  if (req.isAuthenticated()) {
-    // Si el usuario está autenticado, puedes acceder a la información del usuario a través de req.user
-    const usuarioActual = req.user;
-    res.status(200).json(usuarioActual);
-  } else {
-    // Si el usuario no está autenticado, puedes devolver un objeto vacío o un mensaje de error.
-    res.status(401).json({ message: "Usuario no autenticado" });
-  }
-});
-*/

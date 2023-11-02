@@ -39,7 +39,8 @@ app.use(express.urlencoded({ extended: true }));
 //PARA SESSION Y LOGIN
 
 const sessionStore = ConnectMongo.create({
-  mongoUrl: config.MONGO_URL,
+  mongoUrl: `${config.MONGO_URL}&dbName=${config.DB_NAME}`,
+
   ttl: 3600,
 });
 
