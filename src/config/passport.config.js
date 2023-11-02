@@ -93,7 +93,9 @@ const inicializaPassport = () => {
          }
 
          // Utiliza el controlador y el servicio para manejar la autenticación del usuario
-         let usuario = await usersController.getUserById(username);
+       console.log(username)
+            //let usuario = await modeloUsers.findOne({ email: username });
+            let usuario = await usersService.getUserByEmail(username);
          if (!usuario) {
            return done(null, false, {
              message: "Credenciales incorrectas",

@@ -50,7 +50,7 @@ router.post(
       return res.redirect("/");
     } else {
       const error = req.body.error;
-      return res.redirect("login", { error });
+      return res.redirect("/login?error=" + encodeURIComponent(error));
     }
   }
 );

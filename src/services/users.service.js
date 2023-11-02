@@ -10,9 +10,9 @@ class UserService {
     }
   }
 
-  async getUserById(userId) {
+  async getUserByEmail(email) {
     try {
-      const user = await modeloUsers.findById(userId);
+      const user = await modeloUsers.findOne({ email });
       return user;
     } catch (error) {
       throw error;
@@ -30,9 +30,13 @@ class UserService {
 
   async updateUser(userId, userData) {
     try {
-      const updatedUser = await modeloUsers.findByIdAndUpdate(userId, userData, {
-        new: true,
-      });
+      const updatedUser = await modeloUsers.findByIdAndUpdate(
+        userId,
+        userData,
+        {
+          new: true,
+        }
+      );
       return updatedUser;
     } catch (error) {
       throw error;
