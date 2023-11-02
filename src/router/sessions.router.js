@@ -1,9 +1,10 @@
 const express = require("express");
 //const mongoose = require("mongoose");
 const router = express.Router();
-const modeloUsuarios = require("../dao/DB/models/usuariosGithub.modelo.js");
-const modeloUsers = require("../dao/DB/models/usuariosGithub.modelo.js");
-const crypto = require("crypto");
+// const modeloUsuarios = require("../dao/DB/models/usuariosGithub.modelo.js");
+// const modeloUsers = require("../dao/DB/models/usuariosGithub.modelo.js");
+// const crypto = require("crypto");
+// const usersController = require("../controllers/users.controller.js");
 
 const config = require("../config/config.js");
 
@@ -23,26 +24,36 @@ router.get("/errorRegistro", (req, res) => {
 
 
 
-router.post("/registro", util.passportCallRegister("register"), (req, res) => {
-  if (req.user) {
-    req.session.usuario = req.user;
 
-  } else {
-      const error = req.body.error; 
-        return res.redirect("login", { error });
+router.post(
+  "/registro",
+ 
+  util.passportCallRegister("register"),
+  (req, res) => {
+    if (req.user) {
+      req.session.usuario = req.user;
+    } else {
+      const error = req.body.error;
+      return res.redirect("login", { error });
+    }
   }
-});
+);
 
 
-router.post("/login", util.passportCall("loginLocal"), (req, res) => {
-  if (req.user) {
-    req.session.usuario = req.user;
-    return res.redirect("/");
-  } else {    
-    const error = req.body.error;    
-    return res.redirect("login", { error });
+router.post(
+  "/login",
+
+  util.passportCall("loginLocal"),
+  (req, res) => {
+    if (req.user) {
+      req.session.usuario = req.user;
+      return res.redirect("/");
+    } else {
+      const error = req.body.error;
+      return res.redirect("login", { error });
+    }
   }
-});
+);
 
 
 router.get("/logout", (req, res) => {
