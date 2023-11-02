@@ -10,7 +10,7 @@ const cookieParser = require("cookie-parser")
 
 // DOTENV 
 const config = require("./config/config.js")
-
+console.log(config.DB_NAME)
 
 
 //SESSION
@@ -118,10 +118,7 @@ const serverSocket = socketIO(serverExpress);
 serverSocket.on("connection", (socket) => {});
 
 moongose
-  .connect(
-    "mongodb+srv://mauricioalonso:12345qwert@cluster0.frgywur.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce"
-    //"mongodb+srv://contaalonso:12345qwert@cluster0.k4sa2ya.mongodb.net/?retryWrites=true&w=majority&dbName=ecommercePRUEBA"
-  )
+  .connect(config.MONGO_URL, { dbName: config.DB_NAME })
   .then(console.log("DB Conectada"))
   .catch((error) => console.log(error));
 
