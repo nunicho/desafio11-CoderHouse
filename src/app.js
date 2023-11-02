@@ -8,6 +8,10 @@ const moongose = require("mongoose");
 const path = require("path");
 const cookieParser = require("cookie-parser")
 
+// DOTENV 
+const config = require("./config/config.js")
+
+
 
 //SESSION
 const session = require("express-session");
@@ -21,12 +25,15 @@ const passport = require("passport")
 // HANDLEBARS - importación
 const handlebars = require("express-handlebars");
 
-const PORT = 8080;
+const PORT = config.PORT;
+
+
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 
 //PARA SESSION Y LOGIN
@@ -70,6 +77,7 @@ const vistasRouter = require("./router/vistas.router.js");
 
 const sessionsRouter = require("./router/sessions.router.js");
 const { json } = require("body-parser");
+const { prototype } = require("module");
 
 // Inicialización de routers
 app.use("/api/fsproducts", FSproductsRouter);
