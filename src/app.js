@@ -45,7 +45,7 @@ const sessionStore = ConnectMongo.create({
 
 app.use(
   session({
-    secret: "claveSecreta",
+    secret: config.SESSIONS_PASSWORD,
     resave: true,
     saveUninitialized: true,
     store: sessionStore

@@ -30,25 +30,9 @@ const config = {
   CLIENT_ID: process.env.CLIENT_ID,
   CLIENT_SECRECT: process.env.CLIENT_SECRECT,
   CALLBACK_URL: process.env.CALLBACK_URL,
+  SESSIONS_PASSWORD: process.env.SESSIONS_PASSWORD
 };
 
 module.exports = config
 
 
-/*
-const dotenv = require("dotenv");
-
-
-
-dotenv.config({ path: "./.env", override: true });
-
-const config = {
-  PORT: process.env.PORT || 3000,
-  MONGO_URL: process.env.MONGO_URL,
-  DB_NAME: process.env.DB_NAME,
-};
-
-module.exports = {
-  config
-};
-*/
