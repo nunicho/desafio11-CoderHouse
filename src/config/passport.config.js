@@ -17,7 +17,7 @@ const modeloUsuariosGithub = require("../dao/DB/models/usuariosGithub.modelo.js"
 const crypto = require("crypto");
 const util = require("../util.js");
 
-const usersController = require("../controllers/users.controller.js");
+
 const usersService =require("../services/users.service.js")
 
 const inicializaPassport = () => {
@@ -30,7 +30,7 @@ const inicializaPassport = () => {
      },
      async (req, username, password, done) => {
        try {
-         // Utiliza los métodos del controlador y del servicio para manejar la creación de usuarios
+       
          let { first_name, last_name, email, age, password } = req.body;
 
          if (!first_name || !last_name || !age || !email || !password) {
@@ -39,8 +39,8 @@ const inicializaPassport = () => {
            });
          }
 
-         // Añadir validación para age
-         age = parseInt(age); // Convertir age a número
+         
+         age = parseInt(age); 
          if (isNaN(age) || age <= 13 || age >= 120) {
            return done(null, false, {
              message: "La edad debe ser mayor a 13 y menor a 120",
@@ -55,17 +55,17 @@ const inicializaPassport = () => {
          }
 
          const cartId = generateCustomCartId();
+   
 
-         // Utiliza el servicio para crear el usuario
-         let usuario = await usersService.createUser({
-           first_name,
-           last_name,
-           email,
-           age,
-           password: util.generaHash(password),
-           cart: cartId,
-           role: "user",
-         });
+        let usuario = await usersService.createUser({
+          first_name,
+          last_name,
+          email,
+          age,
+          password: util.generaHash(password),
+          cart: cartId,
+          role: "user",
+        });
 
          return done(null, usuario);
        } catch (error) {
@@ -92,9 +92,8 @@ const inicializaPassport = () => {
            });
          }
 
-         // Utiliza el controlador y el servicio para manejar la autenticación del usuario
        console.log(username)
-            //let usuario = await modeloUsers.findOne({ email: username });
+            
             let usuario = await usersService.getUserByEmail(username);
          if (!usuario) {
            return done(null, false, {

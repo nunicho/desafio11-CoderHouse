@@ -2,7 +2,6 @@
 
 const UsersService = require("../services/users.service.js")
 
-
 const createUser = async (req, res) => {
   try {
     const userData = req.body;
@@ -22,7 +21,7 @@ const getUserByEmail = async (req, res) => {
   } catch (error) {
     throw error; // Reenviamos el error
   }
-};;
+};
 
 
 const getUsers = async (req, res) => {
