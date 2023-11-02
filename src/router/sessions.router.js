@@ -25,6 +25,38 @@ router.get("/errorRegistro", (req, res) => {
 
 
 
+// Ruta de registro
+router.post(
+  "/registro",
+  util.passportCallRegister("registro"), // Cambiado el nombre de la estrategia
+  (req, res) => {
+    if (req.user) {
+      req.session.usuario = req.user;
+      return res.redirect("/");
+    } else {
+      const error = req.body.error;
+      return res.redirect("login", { error });
+    }
+  }
+);
+
+// Ruta de inicio de sesión
+router.post(
+  "/login",
+  util.passportCall("loginLocal"), // Cambiado el nombre de la estrategia
+  (req, res) => {
+    if (req.user) {
+      req.session.usuario = req.user;
+      return res.redirect("/");
+    } else {
+      const error = req.body.error;
+      return res.redirect("login", { error });
+    }
+  }
+);
+
+/*
+
 router.post(
   "/registro",
  
@@ -54,8 +86,7 @@ router.post(
     }
   }
 );
-
-
+*/
 router.get("/logout", (req, res) => {
   req.session.destroy((e) => console.log(e));
   res.redirect("/login?mensaje=Logout correcto!");

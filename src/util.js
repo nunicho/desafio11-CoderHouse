@@ -17,11 +17,11 @@ const passportCall = (estrategia) => {
   return function (req, res, next) {
     passport.authenticate(estrategia, function (err, usuario, info) {
       if (err) return next(err);
-      
-       if (!req.body.email || !req.body.password) {
-         return res.redirect("/login?error=Faltan datos");
-       }
-      
+
+      if (!req.body.email || !req.body.password) {
+        return res.redirect("/login?error=Faltan datos");
+      }
+
       if (!usuario) {
         const error = info || {}; // Accede al objeto de error
         const errorMessage = encodeURIComponent(
@@ -38,10 +38,9 @@ const passportCall = (estrategia) => {
   };
 };
 
-
-const passportCallRegister = () => {
+const passportCallRegister = (estrategia) => {
   return function (req, res, next) {
-    passport.authenticate("registro", function (err, usuario, info) {
+    passport.authenticate(estrategia, function (err, usuario, info) {
       if (err) return next(err);
 
       if (!req.body.email || !req.body.password) {
@@ -56,11 +55,12 @@ const passportCallRegister = () => {
         const errorDetalle = encodeURIComponent(
           error.detalle || "Error desconocido"
         );
-        return res.redirect(`/registro?error=${errorMessage} - ${errorDetalle}`);
+        return res.redirect(
+          `/registro?error=${errorMessage} - ${errorDetalle}`
+        );
       }
       req.user = usuario;
-        return res.redirect(`/login?usuarioCreado=${usuario.email}`);
-      //return next();
+      return res.redirect(`/login?usuarioCreado=${usuario.email}`);
     })(req, res);
   };
 };
