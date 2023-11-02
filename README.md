@@ -14,15 +14,15 @@ Mauricio Javier ALONSO
 
 ## 3. TITULO DESAFIO ENTREGABLE: 
 
-2da Práctica de integración sobre tu ecommerce
+Reestructura de nuestro servidor
 
 ## 4. N° DESAFIO ENTREGABLE: 
 
-N° 10
+N° 11
 
 ## 5. CONSIGNA DESAFIO ENTREGABLE: 
 
-Continuar sobre el proyecto que has trabajado para tu ecommerce y configurar los siguientes...
+Con base en las clases previamente vistas, realizar los cambios necesarios en tu proyecto...
 
 
 
