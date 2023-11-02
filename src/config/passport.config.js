@@ -1,3 +1,7 @@
+//PARA LAS VARIABLES DE ENTORNO
+
+const config = require("./config.js");
+
 
 //PASSPORT
 const passport = require("passport");
@@ -13,63 +17,62 @@ const modeloUsuariosGithub = require("../dao/DB/models/usuariosGithub.modelo.js"
 const crypto = require("crypto");
 const util = require("../util.js");
 
-const usersController = require("../controllers/users.controller.js")
+const usersController = require("../controllers/users.controller.js");
 
 const inicializaPassport = () => {
- passport.use(
-   "registro",
-   new local.Strategy(
-     {
-       usernameField: "email",
-       passReqToCallback: true,
-     },
-     async (req, username, password, done) => {
-       try {
-         let { first_name, last_name, email, age, password } = req.body;
+  passport.use(
+    "registro",
+    new local.Strategy(
+      {
+        usernameField: "email",
+        passReqToCallback: true,
+      },
+      async (req, username, password, done) => {
+        try {
+          let { first_name, last_name, email, age, password } = req.body;
 
-         if (!first_name || !last_name || !age || !email || !password) {
-           return done(null, false, {
-             message: "Por favor, complete todos los campos",
-           });
-         }
+          if (!first_name || !last_name || !age || !email || !password) {
+            return done(null, false, {
+              message: "Por favor, complete todos los campos",
+            });
+          }
 
-         // Añadir validación para age
-         age = parseInt(age); // Convertir age a número
-         if (isNaN(age) || age <= 13 || age >= 120) {
-           return done(null, false, {
-             message: "La edad debe ser mayor a 13 y menor a 120",
-           });
-         }
+          // Añadir validación para age
+          age = parseInt(age); // Convertir age a número
+          if (isNaN(age) || age <= 13 || age >= 120) {
+            return done(null, false, {
+              message: "La edad debe ser mayor a 13 y menor a 120",
+            });
+          }
 
-         let existe = await modeloUsers.findOne({ email });
-         if (existe) {
-           return done(null, false, {
-             message: "El correo electrónico ya está registrado",
-           });
-         }
+          let existe = await modeloUsers.findOne({ email });
+          if (existe) {
+            return done(null, false, {
+              message: "El correo electrónico ya está registrado",
+            });
+          }
 
-         const cartId = generateCustomCartId();
+          const cartId = generateCustomCartId();
 
-         let usuario = await modeloUsers.create({
-           first_name,
-           last_name,
-           email,
-           age,
-           password: util.generaHash(password),
-           cart: cartId,
-           role: "user",
-         });
+          let usuario = await modeloUsers.create({
+            first_name,
+            last_name,
+            email,
+            age,
+            password: util.generaHash(password),
+            cart: cartId,
+            role: "user",
+          });
 
-         return done(null, usuario);
-       } catch (error) {
-         return done(error, false, {
-           message: "Ocurrió un error durante el registro.",
-         });
-       }
-     }
-   )
- );
-
+          return done(null, usuario);
+        } catch (error) {
+          return done(error, false, {
+            message: "Ocurrió un error durante el registro.",
+          });
+        }
+      }
+    )
+  );
 
   passport.use(
     "loginLocal",
@@ -115,14 +118,14 @@ const inicializaPassport = () => {
       }
     )
   );
-  
+
   passport.use(
     "loginGithub",
     new github.Strategy(
       {
-        clientID: "Iv1.cc00dcea44bb45db",
-        clientSecret: "f942dbbff3e0ead468ab3731ba8b0283a6d70057",
-        callbackURL: "http://localhost:8080/api/sessions/callbackGithub",
+        clientID: config.CLIENT_ID,
+        clientSecret: config.CLIENT_SECRECT,
+        callbackURL: config.CALLBACK_URL,
       },
       async (token, tokenRefresh, profile, done) => {
         try {
@@ -164,10 +167,5 @@ function generateCustomCartId() {
   const cartId = `${Date.now().toString()}-${randomNumber}`;
   return cartId;
 }
-
-
-
-
-
 
 module.exports = inicializaPassport;

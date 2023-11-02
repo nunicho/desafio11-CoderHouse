@@ -23,10 +23,13 @@ dotenv.config({
 const config = {
   PORT: process.env.PORT || 3000,
   MONGO_URL: process.env.MONGO_URL,
-  DB_NAME:process.env.DB_NAME,
-  ADMIN_USER:process.env.ADMIN_USER,
-  ADMIN_EMAIL:process.env.ADMIN_EMAIL,
-  ADMIN_PASSWORD:process.env.ADMIN_PASSWORD
+  DB_NAME: process.env.DB_NAME,
+  ADMIN_USER: process.env.ADMIN_USER,
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+  CLIENT_ID: process.env.CLIENT_ID,
+  CLIENT_SECRECT: process.env.CLIENT_SECRECT,
+  CALLBACK_URL: process.env.CALLBACK_URL,
 };
 
 module.exports = config
