@@ -1,9 +1,9 @@
-const UserModel = require("../dao/DB/models/users.modelo.js");
+const modeloUsers = require("../dao/DB/models/users.modelo.js");
 
 class UserService {
   async createUser(userData) {
     try {
-      const user = await UserModel.create(userData);
+      const user = await modeloUsers.create(userData);
       return user;
     } catch (error) {
       throw error;
@@ -12,7 +12,7 @@ class UserService {
 
   async getUserById(userId) {
     try {
-      const user = await UserModel.findById(userId);
+      const user = await modeloUsers.findById(userId);
       return user;
     } catch (error) {
       throw error;
@@ -21,7 +21,7 @@ class UserService {
 
   async getUsers() {
     try {
-      const users = await UserModel.find();
+      const users = await modeloUsers.find();
       return users;
     } catch (error) {
       throw error;
@@ -30,7 +30,7 @@ class UserService {
 
   async updateUser(userId, userData) {
     try {
-      const updatedUser = await UserModel.findByIdAndUpdate(userId, userData, {
+      const updatedUser = await modeloUsers.findByIdAndUpdate(userId, userData, {
         new: true,
       });
       return updatedUser;
@@ -41,7 +41,7 @@ class UserService {
 
   async deleteUser(userId) {
     try {
-      await UserModel.findByIdAndDelete(userId);
+      await modeloUsers.findByIdAndDelete(userId);
     } catch (error) {
       throw error;
     }
