@@ -5,6 +5,8 @@ const modeloUsuarios = require("../dao/DB/models/usuariosGithub.modelo.js");
 const modeloUsers = require("../dao/DB/models/usuariosGithub.modelo.js");
 const crypto = require("crypto");
 
+const config = require("../config/config.js");
+
 
 const util = require("../util.js");
 
@@ -88,10 +90,10 @@ router.post("/loginAdmin", async (req, res) => {
     return res.redirect("/loginAdmin?error=Faltan datos");
   }
 
-  if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
+  if (email ===  config.ADMIN_EMAIL && password === config.ADMIN_PASSWORD) {
     req.session.usuario = {
-      nombre: "Coder",
-      email: "adminCoder@coder.com",
+      nombre: config.ADMIN_USER,
+      email: config.ADMIN_EMAIL,
       role: "administrador",
     };
     // Se puso hardcodeado adminCoder@coder.com en el código de sessions.router.js porque no debía estar en la base de datos de usuarios.

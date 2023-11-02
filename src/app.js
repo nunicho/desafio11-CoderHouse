@@ -10,7 +10,7 @@ const cookieParser = require("cookie-parser")
 
 // DOTENV 
 const config = require("./config/config.js")
-console.log(config.DB_NAME)
+//console.log(config.DB_NAME)
 
 
 //SESSION
@@ -38,17 +38,17 @@ app.use(express.urlencoded({ extended: true }));
 
 //PARA SESSION Y LOGIN
 
+const sessionStore = ConnectMongo.create({
+  mongoUrl: config.MONGO_URL,
+  ttl: 3600,
+});
+
 app.use(
   session({
     secret: "claveSecreta",
     resave: true,
     saveUninitialized: true,
-    store: ConnectMongo.create({
-      mongoUrl:
-        "mongodb+srv://mauricioalonso:12345qwert@cluster0.frgywur.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce",
-        //"mongodb+srv://contaalonso:12345qwert@cluster0.k4sa2ya.mongodb.net/?retryWrites=true&w=majority&dbName=ecommercePRUEBA",
-      ttl: 3600,
-    }),
+    store: sessionStore
   })
 );
 
